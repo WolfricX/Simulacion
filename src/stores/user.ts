@@ -29,24 +29,24 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function register(email: string, password: string) {
     try {
-      const response = await RegisterService(email, password)
+      const response = await RegisterService(email, password);
       if (response.status === 200) {
-        user.value = response.data
-        token.value = user.value.token
+        user.value = response.data;
+        token.value = user.value.token;
       }
     } catch (error: unknown) {
-      const errorMessage = 'Error during registration'
-      console.error(errorMessage, error)
-      await logService.log('error', errorMessage, { error, email })
+      const errorMessage = 'Error during registration';
+      console.error(errorMessage, error);
+      await logService.log('error', errorMessage, { error, email });
     }
   }
-
 
   async function logout() {
     try {
       await LogoutService();
       user.value = {} as User;
       token.value = '';
+      localStorage.removeItem('token'); // Eliminar el token del almacenamiento local
     } catch (error: unknown) {
       const errorMessage = 'Error during logout';
       console.error(errorMessage, error);

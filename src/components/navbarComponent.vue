@@ -17,7 +17,7 @@
               {{ link.name }}
             </button>
           </li>
-          <li v-if="authState.value">
+          <li v-if="authState">
             <button
               @click="handleLogout"
               class="py-2 px-4 rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors text-base"
@@ -34,7 +34,6 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { isAuth } from '@/composables/useAuth';
 import { useAuthStore } from '@/stores/user';
 
 const activeSection = ref('');
@@ -46,12 +45,16 @@ const links = ref([
 
 const authStore = useAuthStore();
 const router = useRouter();
-const authState = ref(isAuth().value);
+const authState = ref<boolean>(authStore.isLoggedIn);
 
-watch(isAuth, (newVal) => {
-  authState.value = newVal;
-  console.log('authState updated to:', authState.value);
-}, { immediate: true });
+watch(
+  () => authStore.isLoggedIn,
+  (newVal) => {
+    authState.value = newVal;
+    console.log('authState updated to:', authState.value);
+  },
+  { immediate: true }
+);
 
 const scrollToSection = (sectionId: string) => {
   const section = document.getElementById(sectionId);
@@ -81,9 +84,7 @@ const handleLogout = async () => {
   }
 };
 
-
 onMounted(() => {
   console.log('Initial authState:', authState.value);
 });
 </script>
-
